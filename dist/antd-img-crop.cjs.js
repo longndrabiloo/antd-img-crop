@@ -24,6 +24,7 @@ var Cropper = require('react-easy-crop');
 var LocaleReceiver = require('antd/lib/locale-provider/LocaleReceiver');
 var Modal = require('antd/lib/modal');
 var Slider = require('antd/lib/slider');
+var imageCompression = require('browser-image-compression');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -37,6 +38,7 @@ var Cropper__default = /*#__PURE__*/_interopDefaultLegacy(Cropper);
 var LocaleReceiver__default = /*#__PURE__*/_interopDefaultLegacy(LocaleReceiver);
 var Modal__default = /*#__PURE__*/_interopDefaultLegacy(Modal);
 var Slider__default = /*#__PURE__*/_interopDefaultLegacy(Slider);
+var imageCompression__default = /*#__PURE__*/_interopDefaultLegacy(imageCompression);
 
 __$styleInject(".antd-img-crop-modal .ant-modal-body {\n  padding-bottom: 16px;\n}\n.antd-img-crop-modal .antd-img-crop-container {\n  position: relative;\n  width: 100%;\n  height: 40vh;\n  margin-bottom: 16px;\n}\n.antd-img-crop-modal .antd-img-crop-control {\n  display: flex;\n  align-items: center;\n  width: 60%;\n  margin-left: auto;\n  margin-right: auto;\n}\n.antd-img-crop-modal .antd-img-crop-control button {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  width: 34px;\n  height: 34px;\n  padding: 0;\n  font-style: normal;\n  background: transparent;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n}\n.antd-img-crop-modal .antd-img-crop-control button[disabled] {\n  cursor: default;\n}\n.antd-img-crop-modal .antd-img-crop-control.zoom button {\n  font-size: 18px;\n}\n.antd-img-crop-modal .antd-img-crop-control.rotate button {\n  font-size: 16px;\n}\n.antd-img-crop-modal .antd-img-crop-control.rotate button:first-of-type {\n  transform: rotate(-20deg);\n}\n.antd-img-crop-modal .antd-img-crop-control.rotate button:last-of-type {\n  transform: rotate(20deg);\n}\n.antd-img-crop-modal .antd-img-crop-control .ant-slider {\n  flex: 1;\n  margin: 0 8px;\n}\n");
 
@@ -151,6 +153,10 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
       modalWidth = props.modalWidth,
       modalOk = props.modalOk,
       modalCancel = props.modalCancel,
+      _props$maxWidth = props.maxWidth,
+      maxWidth = _props$maxWidth === void 0 ? Infinity : _props$maxWidth,
+      _props$maxSize = props.maxSize,
+      maxSize = _props$maxSize === void 0 ? Infinity : _props$maxSize,
       beforeCrop = props.beforeCrop,
       children = props.children,
       cropperProps = props.cropperProps;
@@ -193,41 +199,20 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
         beforeUpload: function beforeUpload(file, fileList) {
           return new Promise( /*#__PURE__*/function () {
             var _ref = _asyncToGenerator__default['default']( /*#__PURE__*/_regeneratorRuntime__default['default'].mark(function _callee(resolve, reject) {
-              var callback, isContinue, reader;
+              var reader;
               return _regeneratorRuntime__default['default'].wrap(function _callee$(_context) {
                 while (1) {
                   switch (_context.prev = _context.next) {
                     case 0:
-                      callback = function callback(f, fl) {
-                        file = f;
-                        fileList = fl;
-                      };
-
-                      _context.t0 = beforeCrop;
-
-                      if (!_context.t0) {
-                        _context.next = 6;
-                        break;
-                      }
-
-                      _context.next = 5;
-                      return beforeCrop(file, fileList, callback);
-
-                    case 5:
-                      _context.t0 = _context.sent;
-
-                    case 6:
-                      isContinue = _context.t0;
-
-                      if (isContinue) {
-                        _context.next = 10;
+                      if (!(beforeCrop && !beforeCrop(file, fileList))) {
+                        _context.next = 3;
                         break;
                       }
 
                       reject();
                       return _context.abrupt("return");
 
-                    case 10:
+                    case 3:
                       fileRef.current = file;
                       resolveRef.current = resolve;
                       rejectRef.current = reject;
@@ -237,7 +222,7 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
                       });
                       reader.readAsDataURL(file);
 
-                    case 16:
+                    case 9:
                     case "end":
                       return _context.stop();
                   }
@@ -301,7 +286,7 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
     setRotateVal(0);
   }, []);
   var onOk = React.useCallback( /*#__PURE__*/_asyncToGenerator__default['default']( /*#__PURE__*/_regeneratorRuntime__default['default'].mark(function _callee3() {
-    var naturalImg, naturalWidth, naturalHeight, canvas, ctx, maxLen, halfMax, left, top, maxImgData, _cropPixelsRef$curren, width, height, x, y, _fileRef$current, type, name, uid;
+    var naturalImg, _naturalImg, naturalWidth, naturalHeight, nfile, rate, options, newFile, createImg, canvas, ctx, maxLen, halfMax, left, top, maxImgData, _cropPixelsRef$curren, width, height, x, y, _fileRef$current, type, name, uid;
 
     return _regeneratorRuntime__default['default'].wrap(function _callee3$(_context3) {
       while (1) {
@@ -309,7 +294,55 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
           case 0:
             onClose();
             naturalImg = document.querySelector("." + MEDIA_CLASS);
-            naturalWidth = naturalImg.naturalWidth, naturalHeight = naturalImg.naturalHeight;
+            _naturalImg = naturalImg, naturalWidth = _naturalImg.naturalWidth, naturalHeight = _naturalImg.naturalHeight;
+            _context3.next = 5;
+            return fetch(naturalImg.src).then(function (res) {
+              return res.blob();
+            });
+
+          case 5:
+            nfile = _context3.sent;
+            rate = 1; // resize before crop
+
+            if (!(naturalHeight > maxWidth || naturalWidth > maxWidth || nfile.size > maxSize)) {
+              _context3.next = 19;
+              break;
+            }
+
+            options = {
+              maxSizeMB: maxSize / 1000,
+              maxWidthOrHeight: maxWidth,
+              onProgress: function onProgress(p) {
+                console.log('** compress image: ', p + '%');
+              }
+            };
+            _context3.next = 11;
+            return imageCompression__default['default'](nfile, options);
+
+          case 11:
+            newFile = _context3.sent;
+
+            createImg = function createImg() {
+              return new Promise(function (resolve) {
+                var img = document.createElement("img");
+                img.src = URL.createObjectURL(newFile);
+
+                img.onload = function () {
+                  resolve(img);
+                };
+              });
+            };
+
+            _context3.next = 15;
+            return createImg();
+
+          case 15:
+            naturalImg = _context3.sent;
+            rate = naturalImg.naturalWidth / naturalWidth;
+            naturalWidth = naturalImg.naturalWidth;
+            naturalHeight = naturalImg.naturalHeight;
+
+          case 19:
             canvas = document.createElement('canvas');
             ctx = canvas.getContext('2d'); // create a max canvas to cover the source image after rotated
 
@@ -333,10 +366,9 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
 
             maxImgData = ctx.getImageData(0, 0, maxLen, maxLen);
             _cropPixelsRef$curren = cropPixelsRef.current, width = _cropPixelsRef$curren.width, height = _cropPixelsRef$curren.height, x = _cropPixelsRef$curren.x, y = _cropPixelsRef$curren.y;
-            console.log(width, height);
-            canvas.width = width;
-            canvas.height = height;
-            ctx.putImageData(maxImgData, Math.round(-left - x), Math.round(-top - y)); // get the new image
+            canvas.width = width * rate;
+            canvas.height = height * rate;
+            ctx.putImageData(maxImgData, Math.round(-left - x * rate), Math.round(-top - y * rate)); // get the new image
 
             _fileRef$current = fileRef.current, type = _fileRef$current.type, name = _fileRef$current.name, uid = _fileRef$current.uid;
             canvas.toBlob( /*#__PURE__*/function () {
@@ -422,7 +454,7 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
               };
             }(), type, quality);
 
-          case 22:
+          case 37:
           case "end":
             return _context3.stop();
         }

@@ -30,11 +30,12 @@
   "peerDependencies": {
     "antd": ">=4.0.0",
     "prop-types": ">=15.6.2",
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react": "17.0.1",
+    "react-dom": "^17.0.2"
   },
   "dependencies": {
     "@babel/runtime": "^7.13.4",
+    "browser-image-compression": "^1.0.14",
     "react-easy-crop": "^3.3.1"
   },
   "devDependencies": {

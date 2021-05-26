@@ -5,6 +5,7 @@ import LocaleReceiver from 'antd/es/locale-provider/LocaleReceiver';
 import Modal from 'antd/es/modal';
 import Slider from 'antd/es/slider';
 import './index.less';
+import imageCompression from 'browser-image-compression'
 
 const pkg = 'antd-img-crop';
 const noop = () => {};
@@ -123,6 +124,9 @@ const ImgCrop = forwardRef((props, ref) => {
     modalOk,
     modalCancel,
 
+    maxWidth = Infinity,
+    maxSize = Infinity,
+
     beforeCrop,
     children,
 
@@ -158,14 +162,7 @@ const ImgCrop = forwardRef((props, ref) => {
         accept: accept || 'image/*',
         beforeUpload: (file, fileList) => {
           return new Promise(async (resolve, reject) => {
-            const callback = (f, fl) => {
-              file = f
-              fileList = fl
-            }
-
-            const isContinue = beforeCrop && await beforeCrop(file, fileList, callback)
-
-            if (!isContinue) {
+            if (beforeCrop && !beforeCrop(file, fileList)) {
               reject();
               return;
             }
@@ -237,14 +234,41 @@ const ImgCrop = forwardRef((props, ref) => {
   const onOk = useCallback(async () => {
     onClose();
 
-    const naturalImg = document.querySelector(`.${MEDIA_CLASS}`);
-    const { naturalWidth, naturalHeight } = naturalImg;
+    let naturalImg = document.querySelector(`.${MEDIA_CLASS}`);
+    let { naturalWidth, naturalHeight } = naturalImg;
+    let nfile = await fetch(naturalImg.src).then(res => res.blob())
+    let rate = 1
+
+    // resize before crop
+    if(naturalHeight > maxWidth || naturalWidth > maxWidth || nfile.size > maxSize)  {
+      const options = {
+        maxSizeMB: maxSize / 1000,
+        maxWidthOrHeight: maxWidth,
+        onProgress(p) {
+          console.log('** compress image: ', p + '%')
+        },
+      }
+      const newFile = await imageCompression(nfile, options)
+      const createImg = () => new Promise((resolve) => {
+        const img = document.createElement("img")
+        img.src = URL.createObjectURL(newFile)
+        img.onload = () => {
+          resolve(img)
+        }
+      })
+
+      naturalImg = await createImg()
+      rate = naturalImg.naturalWidth / naturalWidth
+      naturalWidth = naturalImg.naturalWidth
+      naturalHeight = naturalImg.naturalHeight
+    }
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
     // create a max canvas to cover the source image after rotated
-    const maxLen = Math.sqrt(Math.pow(naturalWidth, 2) + Math.pow(naturalHeight, 2));
-    canvas.width = maxLen;
+    const maxLen = Math.sqrt(Math.pow(naturalWidth, 2) + Math.pow(naturalHeight, 2))
+    canvas.width = maxLen; 
     canvas.height = maxLen;
 
     // rotate the image
@@ -266,10 +290,9 @@ const ImgCrop = forwardRef((props, ref) => {
     // shrink the max canvas to the crop area size, then align two center points
     const maxImgData = ctx.getImageData(0, 0, maxLen, maxLen);
     const { width, height, x, y } = cropPixelsRef.current;
-    console.log(width, height);
-    canvas.width = width;
-    canvas.height = height;
-    ctx.putImageData(maxImgData, Math.round(-left - x), Math.round(-top - y));
+    canvas.width = width * rate;
+    canvas.height = height * rate;
+    ctx.putImageData(maxImgData, Math.round(-left - x * rate), Math.round(-top - y * rate));
 
     // get the new image
     const { type, name, uid } = fileRef.current;
