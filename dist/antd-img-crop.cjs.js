@@ -190,67 +190,67 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
     return _extends__default['default']({}, upload, {
       props: _extends__default['default']({}, restUploadProps, {
         accept: accept || 'image/*',
-        beforeUpload: function () {
-          var _beforeUpload = _asyncToGenerator__default['default']( /*#__PURE__*/_regeneratorRuntime__default['default'].mark(function _callee(file, fileList) {
-            var callback, isContinue, reader;
-            return _regeneratorRuntime__default['default'].wrap(function _callee$(_context) {
-              while (1) {
-                switch (_context.prev = _context.next) {
-                  case 0:
-                    callback = function callback(f, fl) {
-                      file = f;
-                      fileList = fl;
-                    };
+        beforeUpload: function beforeUpload(file, fileList) {
+          return new Promise( /*#__PURE__*/function () {
+            var _ref = _asyncToGenerator__default['default']( /*#__PURE__*/_regeneratorRuntime__default['default'].mark(function _callee(resolve, reject) {
+              var callback, isContinue, reader;
+              return _regeneratorRuntime__default['default'].wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      callback = function callback(f, fl) {
+                        file = f;
+                        fileList = fl;
+                      };
 
-                    _context.t0 = beforeCrop;
+                      _context.t0 = beforeCrop;
 
-                    if (!_context.t0) {
-                      _context.next = 6;
-                      break;
-                    }
+                      if (!_context.t0) {
+                        _context.next = 6;
+                        break;
+                      }
 
-                    _context.next = 5;
-                    return beforeCrop(file, fileList, callback);
+                      _context.next = 5;
+                      return beforeCrop(file, fileList, callback);
 
-                  case 5:
-                    _context.t0 = _context.sent;
+                    case 5:
+                      _context.t0 = _context.sent;
 
-                  case 6:
-                    isContinue = _context.t0;
-                    console.log(isContinue);
+                    case 6:
+                      isContinue = _context.t0;
+                      console.log(isContinue);
 
-                    if (isContinue) {
-                      _context.next = 11;
-                      break;
-                    }
+                      if (isContinue) {
+                        _context.next = 11;
+                        break;
+                      }
 
-                    reject();
-                    return _context.abrupt("return");
+                      reject();
+                      return _context.abrupt("return");
 
-                  case 11:
-                    fileRef.current = file;
-                    resolveRef.current = resolve;
-                    rejectRef.current = reject;
-                    reader = new FileReader();
-                    reader.addEventListener('load', function () {
-                      setSrc(reader.result);
-                    });
-                    reader.readAsDataURL(file);
+                    case 11:
+                      fileRef.current = file;
+                      resolveRef.current = resolve;
+                      rejectRef.current = reject;
+                      reader = new FileReader();
+                      reader.addEventListener('load', function () {
+                        setSrc(reader.result);
+                      });
+                      reader.readAsDataURL(file);
 
-                  case 17:
-                  case "end":
-                    return _context.stop();
+                    case 17:
+                    case "end":
+                      return _context.stop();
+                  }
                 }
-              }
-            }, _callee);
-          }));
+              }, _callee);
+            }));
 
-          function beforeUpload(_x, _x2) {
-            return _beforeUpload.apply(this, arguments);
-          }
-
-          return beforeUpload;
-        }()
+            return function (_x, _x2) {
+              return _ref.apply(this, arguments);
+            };
+          }());
+        }
       })
     });
   }, [beforeCrop, children]);
@@ -340,7 +340,7 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
 
             _fileRef$current = fileRef.current, type = _fileRef$current.type, name = _fileRef$current.name, uid = _fileRef$current.uid;
             canvas.toBlob( /*#__PURE__*/function () {
-              var _ref2 = _asyncToGenerator__default['default']( /*#__PURE__*/_regeneratorRuntime__default['default'].mark(function _callee2(blob) {
+              var _ref3 = _asyncToGenerator__default['default']( /*#__PURE__*/_regeneratorRuntime__default['default'].mark(function _callee2(blob) {
                 var newFile, res, passedFile, _type;
 
                 return _regeneratorRuntime__default['default'].wrap(function _callee2$(_context2) {
@@ -418,7 +418,7 @@ var ImgCrop = /*#__PURE__*/React.forwardRef(function (props, ref) {
               }));
 
               return function (_x3) {
-                return _ref2.apply(this, arguments);
+                return _ref3.apply(this, arguments);
               };
             }(), type, quality);
 
