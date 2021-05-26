@@ -174,26 +174,64 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
       props: _extends({}, restUploadProps, {
         accept: accept || 'image/*',
         beforeUpload: function beforeUpload(file, fileList) {
-          return new Promise(function (resolve, reject) {
-            var callback = function callback(f, fl) {
-              file = f;
-              fileList = fl;
+          return new Promise( /*#__PURE__*/function () {
+            var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(resolve, reject) {
+              var callback, isContinue, reader;
+              return _regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      callback = function callback(f, fl) {
+                        file = f;
+                        fileList = fl;
+                      };
+
+                      _context.t0 = beforeCrop;
+
+                      if (!_context.t0) {
+                        _context.next = 6;
+                        break;
+                      }
+
+                      _context.next = 5;
+                      return beforeCrop(file, fileList, callback);
+
+                    case 5:
+                      _context.t0 = _context.sent;
+
+                    case 6:
+                      isContinue = _context.t0;
+
+                      if (isContinue) {
+                        _context.next = 10;
+                        break;
+                      }
+
+                      reject();
+                      return _context.abrupt("return");
+
+                    case 10:
+                      fileRef.current = file;
+                      resolveRef.current = resolve;
+                      rejectRef.current = reject;
+                      reader = new FileReader();
+                      reader.addEventListener('load', function () {
+                        setSrc(reader.result);
+                      });
+                      reader.readAsDataURL(file);
+
+                    case 16:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _callee);
+            }));
+
+            return function (_x, _x2) {
+              return _ref.apply(this, arguments);
             };
-
-            if (beforeCrop && !beforeCrop(file, fileList, callback)) {
-              reject();
-              return;
-            }
-
-            fileRef.current = file;
-            resolveRef.current = resolve;
-            rejectRef.current = reject;
-            var reader = new FileReader();
-            reader.addEventListener('load', function () {
-              setSrc(reader.result);
-            });
-            reader.readAsDataURL(file);
-          });
+          }());
         }
       })
     });
@@ -245,12 +283,12 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
     setZoomVal(1);
     setRotateVal(0);
   }, []);
-  var onOk = useCallback( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2() {
+  var onOk = useCallback( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3() {
     var naturalImg, naturalWidth, naturalHeight, canvas, ctx, maxLen, halfMax, left, top, maxImgData, _cropPixelsRef$curren, width, height, x, y, _fileRef$current, type, name, uid;
 
-    return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return _regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             onClose();
             naturalImg = document.querySelector("." + MEDIA_CLASS);
@@ -284,12 +322,12 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
 
             _fileRef$current = fileRef.current, type = _fileRef$current.type, name = _fileRef$current.name, uid = _fileRef$current.uid;
             canvas.toBlob( /*#__PURE__*/function () {
-              var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(blob) {
+              var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(blob) {
                 var newFile, res, passedFile, _type;
 
-                return _regeneratorRuntime.wrap(function _callee$(_context) {
+                return _regeneratorRuntime.wrap(function _callee2$(_context2) {
                   while (1) {
-                    switch (_context.prev = _context.next) {
+                    switch (_context2.prev = _context2.next) {
                       case 0:
                         newFile = new File([blob], name, {
                           type: type
@@ -297,81 +335,81 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
                         newFile.uid = uid;
 
                         if (!(typeof beforeUploadRef.current !== 'function')) {
-                          _context.next = 4;
+                          _context2.next = 4;
                           break;
                         }
 
-                        return _context.abrupt("return", resolveRef.current(newFile));
+                        return _context2.abrupt("return", resolveRef.current(newFile));
 
                       case 4:
                         res = beforeUploadRef.current(newFile, [newFile]);
 
                         if (!(typeof res !== 'boolean' && !res)) {
-                          _context.next = 8;
+                          _context2.next = 8;
                           break;
                         }
 
                         console.error('beforeUpload must return a boolean or Promise');
-                        return _context.abrupt("return");
+                        return _context2.abrupt("return");
 
                       case 8:
                         if (!(res === true)) {
-                          _context.next = 10;
+                          _context2.next = 10;
                           break;
                         }
 
-                        return _context.abrupt("return", resolveRef.current(newFile));
+                        return _context2.abrupt("return", resolveRef.current(newFile));
 
                       case 10:
                         if (!(res === false)) {
-                          _context.next = 12;
+                          _context2.next = 12;
                           break;
                         }
 
-                        return _context.abrupt("return", rejectRef.current('not upload'));
+                        return _context2.abrupt("return", rejectRef.current('not upload'));
 
                       case 12:
                         if (!(res && typeof res.then === 'function')) {
-                          _context.next = 25;
+                          _context2.next = 25;
                           break;
                         }
 
-                        _context.prev = 13;
-                        _context.next = 16;
+                        _context2.prev = 13;
+                        _context2.next = 16;
                         return res;
 
                       case 16:
-                        passedFile = _context.sent;
+                        passedFile = _context2.sent;
                         _type = Object.prototype.toString.call(passedFile);
                         if (_type === '[object File]' || _type === '[object Blob]') newFile = passedFile;
                         resolveRef.current(newFile);
-                        _context.next = 25;
+                        _context2.next = 25;
                         break;
 
                       case 22:
-                        _context.prev = 22;
-                        _context.t0 = _context["catch"](13);
-                        rejectRef.current(_context.t0);
+                        _context2.prev = 22;
+                        _context2.t0 = _context2["catch"](13);
+                        rejectRef.current(_context2.t0);
 
                       case 25:
                       case "end":
-                        return _context.stop();
+                        return _context2.stop();
                     }
                   }
-                }, _callee, null, [[13, 22]]);
+                }, _callee2, null, [[13, 22]]);
               }));
 
-              return function (_x) {
-                return _ref2.apply(this, arguments);
+              return function (_x3) {
+                return _ref3.apply(this, arguments);
               };
             }(), type, quality);
 
           case 21:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2);
+    }, _callee3);
   })), [hasRotate, onClose, quality, rotateVal]);
 
   var renderComponent = function renderComponent(titleOfModal) {
