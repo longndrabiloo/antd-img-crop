@@ -156,30 +156,31 @@ const ImgCrop = forwardRef((props, ref) => {
       props: {
         ...restUploadProps,
         accept: accept || 'image/*',
-        beforeUpload:  (file, fileList) =>
-          new Promise(async (resolve, reject) => {
-            const callback = (f, fl) => {
-              file = f
-              fileList = fl
-            }
+        beforeUpload: async  (file, fileList) => {
+          const callback = (f, fl) => {
+            file = f
+            fileList = fl
+          }
 
-            const isContinue =  beforeCrop && await beforeCrop(file, fileList, callback)
+          const isContinue = beforeCrop && await beforeCrop(file, fileList, callback)
 
-            if (!isContinue) {
-              reject();
-              return;
-            }
+          console.log(isContinue)
 
-            fileRef.current = file;
-            resolveRef.current = resolve;
-            rejectRef.current = reject;
+          if (!isContinue) {
+            reject();
+            return;
+          }
 
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-              setSrc(reader.result);
-            });
-            reader.readAsDataURL(file);
-          }),
+          fileRef.current = file;
+          resolveRef.current = resolve;
+          rejectRef.current = reject;
+
+          const reader = new FileReader();
+          reader.addEventListener('load', () => {
+            setSrc(reader.result);
+          });
+          reader.readAsDataURL(file);
+        }
       },
     };
   }, [beforeCrop, children]);
