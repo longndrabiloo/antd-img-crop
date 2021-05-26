@@ -201,17 +201,16 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
 
                     case 6:
                       isContinue = _context.t0;
-                      console.log(isContinue);
 
                       if (isContinue) {
-                        _context.next = 11;
+                        _context.next = 10;
                         break;
                       }
 
                       reject();
                       return _context.abrupt("return");
 
-                    case 11:
+                    case 10:
                       fileRef.current = file;
                       resolveRef.current = resolve;
                       rejectRef.current = reject;
@@ -221,7 +220,7 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
                       });
                       reader.readAsDataURL(file);
 
-                    case 17:
+                    case 16:
                     case "end":
                       return _context.stop();
                   }
@@ -317,6 +316,7 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
 
             maxImgData = ctx.getImageData(0, 0, maxLen, maxLen);
             _cropPixelsRef$curren = cropPixelsRef.current, width = _cropPixelsRef$curren.width, height = _cropPixelsRef$curren.height, x = _cropPixelsRef$curren.x, y = _cropPixelsRef$curren.y;
+            console.log(width, height);
             canvas.width = width;
             canvas.height = height;
             ctx.putImageData(maxImgData, Math.round(-left - x), Math.round(-top - y)); // get the new image
@@ -405,7 +405,7 @@ var ImgCrop = /*#__PURE__*/forwardRef(function (props, ref) {
               };
             }(), type, quality);
 
-          case 21:
+          case 22:
           case "end":
             return _context3.stop();
         }

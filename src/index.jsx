@@ -165,12 +165,11 @@ const ImgCrop = forwardRef((props, ref) => {
 
             const isContinue = beforeCrop && await beforeCrop(file, fileList, callback)
 
-            console.log(isContinue)
-
             if (!isContinue) {
               reject();
               return;
             }
+
 
             fileRef.current = file;
             resolveRef.current = resolve;
@@ -267,6 +266,7 @@ const ImgCrop = forwardRef((props, ref) => {
     // shrink the max canvas to the crop area size, then align two center points
     const maxImgData = ctx.getImageData(0, 0, maxLen, maxLen);
     const { width, height, x, y } = cropPixelsRef.current;
+    console.log(width, height);
     canvas.width = width;
     canvas.height = height;
     ctx.putImageData(maxImgData, Math.round(-left - x), Math.round(-top - y));
